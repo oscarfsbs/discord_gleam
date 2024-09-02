@@ -40,16 +40,38 @@ type BasicResponseData {
 }
 
 type BasicResponse {
-  BasicResponse(type_: Int, data: BasicResponseData)
+  BasicResponse(type_: Int, flags: Int, data: BasicResponseData)
+}
+
+type DeferredResponse {
+  DeferredResponse(type_: Int, flags: Int)
 }
 
 pub fn make_basic_text_reply(message: String, ephemeral: Bool) -> String {
   let data = BasicResponseData(content: message)
-  let response = BasicResponse(type_: 4, data: data)
+  let response = BasicResponse(type_: 4, flags: 64, data: data)
 
   let callback_data = case ephemeral {
-    True -> [#("content", json.string(data.content)), #("flags", json.int(64))]
+    True -> [
+      #("content", json.string(data.content)),
+      #("flags", json.int(response.flags)),
+    ]
     False -> [#("content", json.string(data.content))]
+  }
+
+  json.object([
+    #("type", json.int(response.type_)),
+    #("data", json.object(callback_data)),
+  ])
+  |> json.to_string
+}
+
+pub fn make_deferred_reply(ephemeral: Bool) -> String {
+  let response = DeferredResponse(type_: 5, flags: 64)
+
+  let callback_data = case ephemeral {
+    True -> [#("flags", json.int(response.flags))]
+    False -> []
   }
 
   json.object([

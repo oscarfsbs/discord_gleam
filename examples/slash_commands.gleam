@@ -57,12 +57,12 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
       case interaction.d.data.name {
         "ping" -> {
-          discord_gleam.interaction_reply_message(interaction, "pong", False)
+          discord_gleam.interaction_reply(interaction, "pong", False)
 
           Nil
         }
         "pong" -> {
-          discord_gleam.interaction_reply_message(interaction, "ping", False)
+          discord_gleam.interaction_reply(interaction, "ping", False)
 
           Nil
         }

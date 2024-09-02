@@ -106,10 +106,17 @@ pub fn register_guild_commands(
   })
 }
 
-pub fn interaction_reply_message(
+pub fn interaction_reply(
   interaction: interaction_create.InteractionCreate,
   message: String,
   ephemeral: Bool,
 ) -> #(String, String) {
   endpoints.interaction_send_text(interaction, message, ephemeral)
+}
+
+pub fn interaction_defer_reply(
+  interaction: interaction_create.InteractionCreate,
+  ephemeral: Bool,
+) -> #(String, String) {
+  endpoints.interaction_defer_reply(interaction, ephemeral)
 }

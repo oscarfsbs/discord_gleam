@@ -415,11 +415,11 @@ pub fn interaction_send_text(
     Ok(resp) -> {
       case resp.status {
         204 -> {
-          logging.log(logging.Debug, "Sent Interaction Response")
+          logging.log(logging.Debug, "Sent interaction response")
           #("OK", resp.body)
         }
         _ -> {
-          logging.log(logging.Error, "Failed to send Interaction Response")
+          logging.log(logging.Error, "Failed to send interaction response")
           io.debug(resp.body)
 
           #("FAILED", resp.body)
@@ -427,7 +427,46 @@ pub fn interaction_send_text(
       }
     }
     Error(err) -> {
-      logging.log(logging.Error, "Error when sending Interaction Response")
+      logging.log(logging.Error, "Error when sending interaction response")
+      io.debug(err)
+
+      #("FAILED", "ERROR")
+    }
+  }
+}
+
+pub fn interaction_defer_reply(
+  interaction: interaction_create.InteractionCreate,
+  ephemeral: Bool,
+) -> #(String, String) {
+  let request =
+    request.new_post(
+      http.Post,
+      "/interactions/"
+        <> interaction.d.id
+        <> "/"
+        <> interaction.d.token
+        <> "/callback",
+      slash_command.make_deferred_reply(ephemeral),
+    )
+
+  case hackney.send(request) {
+    Ok(resp) -> {
+      case resp.status {
+        204 -> {
+          logging.log(logging.Debug, "Deferred interaction response")
+          #("OK", resp.body)
+        }
+        _ -> {
+          logging.log(logging.Error, "Failed to defer interaction response")
+          io.debug(resp.body)
+
+          #("FAILED", resp.body)
+        }
+      }
+    }
+    Error(err) -> {
+      logging.log(logging.Error, "Error deferring interaction response")
       io.debug(err)
 
       #("FAILED", "ERROR")

@@ -32,6 +32,14 @@ pub fn main(token: String, client_id: String, guild_id: String) {
       name: "test2",
       type_: 1,
       description: "Test command",
+      options: [],
+    )
+
+  let test_cmd3 =
+    slash_command.SlashCommand(
+      name: "test3",
+      type_: 1,
+      description: "Test command",
       options: [
         slash_command.CommandOption(
           name: "test",
@@ -42,11 +50,22 @@ pub fn main(token: String, client_id: String, guild_id: String) {
       ],
     )
 
+  let test_cmd4 =
+    slash_command.SlashCommand(
+      name: "test4",
+      type_: 1,
+      description: "Test command",
+      options: [],
+    )
+
   discord_gleam.wipe_global_commands(bot, client_id)
-  discord_gleam.register_global_commands(bot, client_id, [test_cmd])
+  discord_gleam.register_global_commands(bot, client_id, [test_cmd, test_cmd2])
 
   discord_gleam.wipe_guild_commands(bot, client_id, guild_id)
-  discord_gleam.register_guild_commands(bot, client_id, guild_id, [test_cmd2])
+  discord_gleam.register_guild_commands(bot, client_id, guild_id, [
+    test_cmd3,
+    test_cmd4,
+  ])
 
   discord_gleam.run(bot, [event_handler])
 }
@@ -194,12 +213,22 @@ fn event_handler(bot, packet: event_handler.Packet) {
 
       case interaction.d.data.name {
         "test" -> {
-          discord_gleam.interaction_reply_message(interaction, "test", True)
+          discord_gleam.interaction_reply(interaction, "test", True)
 
           Nil
         }
         "test2" -> {
-          discord_gleam.interaction_reply_message(interaction, "test2", False)
+          discord_gleam.interaction_reply(interaction, "test2", False)
+
+          Nil
+        }
+        "test3" -> {
+          discord_gleam.interaction_defer_reply(interaction, True)
+
+          Nil
+        }
+        "test4" -> {
+          discord_gleam.interaction_defer_reply(interaction, False)
 
           Nil
         }
