@@ -125,3 +125,22 @@ pub fn interaction_reply_message(
 ) -> #(String, String) {
   endpoints.interaction_send_text(interaction, message, ephemeral)
 }
+
+/// Defers for 15 minutes. Subsequent replies must be sent using `interaction_edit_reply()` or `interaction_follow_up()`.
+pub fn interaction_defer_reply(
+  interaction: interaction_create.InteractionCreate,
+  ephemeral: Bool,
+) -> #(String, String) {
+  endpoints.interaction_defer_reply(interaction, ephemeral)
+}
+
+pub fn parse_option(
+  interaction: List(interaction_create.ParseableOption),
+  option_name: String,
+) -> String {
+  let per = list.find(interaction, fn(x) { x.name == option_name })
+  case per {
+    Ok(interaction) -> interaction.value
+    Error(_) -> "ERROR: Option not found"
+  }
+}

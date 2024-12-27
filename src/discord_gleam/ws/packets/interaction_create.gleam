@@ -11,6 +11,11 @@ pub type InteractionOption {
   InteractionOption(name: String, type_: Int, description: String)
 }
 
+pub type ParseableOption {
+  ParseableOption(type_: Int, name: String, value: String)
+  // Only supports strings
+}
+
 pub type InteractionUser {
   InteractionUser(username: String, id: Snowflake)
 }
@@ -20,7 +25,12 @@ pub type InteractionCreateMember {
 }
 
 pub type InteractionCommand {
-  InteractionCommand(type_: Int, name: String, id: Snowflake)
+  InteractionCommand(
+    type_: Int,
+    name: String,
+    id: Snowflake,
+    options: List(ParseableOption),
+  )
 }
 
 pub type InteractionCreateData {
@@ -68,11 +78,20 @@ pub fn string_to_data(encoded: String) -> Result(InteractionCreate, String) {
           dynamic.field("guild_id", of: snowflake.from_dynamic),
           dynamic.field(
             "data",
-            of: dynamic.decode3(
+            of: dynamic.decode4(
               InteractionCommand,
               dynamic.field("type", of: dynamic.int),
               dynamic.field("name", of: dynamic.string),
               dynamic.field("id", of: snowflake.from_dynamic),
+              dynamic.field(
+                "options",
+                of: dynamic.list(dynamic.decode3(
+                  ParseableOption,
+                  dynamic.field("type", of: dynamic.int),
+                  dynamic.field("name", of: dynamic.string),
+                  dynamic.field("value", of: dynamic.string),
+                )),
+              ),
             ),
           ),
           dynamic.field("channel_id", of: snowflake.from_dynamic),
