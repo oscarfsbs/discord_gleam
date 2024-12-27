@@ -50,6 +50,7 @@ type DeferredResponse {
 pub fn make_basic_text_reply(message: String, ephemeral: Bool) -> String {
   let data = BasicResponseData(content: message)
   let response = BasicResponse(type_: 4, flags: 64, data: data)
+  // 1 << 6
 
   let callback_data = case ephemeral {
     True -> [

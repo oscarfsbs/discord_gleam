@@ -10,6 +10,7 @@ import gleam/option
 import gleam/string
 import logging
 
+// TODO: Add option parsing
 pub fn main(token: String, client_id: String, guild_id: String) {
   logging.configure()
   logging.set_level(logging.Info)
