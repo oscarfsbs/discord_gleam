@@ -11,7 +11,12 @@ pub fn main() {
   logging.configure()
   logging.set_level(logging.Info)
 
-  let bot = discord_gleam.bot("YOUR TOKEN")
+  let bot =
+    discord_gleam.bot(
+      "YOUR TOKEN",
+      "YOUR CLIENT ID",
+      intents.Intents(message_content: True, guild_messages: True),
+    )
 
   let test_cmd =
     slash_command.SlashCommand(
